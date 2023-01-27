@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Goole 1 click</title>
+</head>
+
+<body>
+    <div id="g_id_onload" data-client_id="2946610537-akekvmf9cu6h8smt4aq9t2bbvn8ou0t5.apps.googleusercontent.com"
+        data-context="signup" data-ux_mode="popup" data-callback="testCallback" data-auto_select="true"
+        data-itp_support="true">
+    </div>
+
+
+    <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with"
+        data-size="large" data-logo_alignment="left">
+    </div>
+
+
+    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+    </fb:login-button>
+
+    <script>
+        function testCallback(response) {
+            console.log("callback");
+
+            responsePayload = decodeJwtResponse(response.credential);
+
+            console.log("ID: " + responsePayload.sub);
+            console.log('Full Name: ' + responsePayload.name);
+            console.log('Given Name: ' + responsePayload.given_name);
+            console.log('Family Name: ' + responsePayload.family_name);
+            console.log("Image URL: " + responsePayload.picture);
+            console.log("Email: " + responsePayload.email);
+        }
+
+        function decodeJwtResponse(data) {
+            var tokens = data.split(".");
+            return JSON.parse(atob(tokens[1]));
+        }
+
+
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: 932245221122507,
+                cookie: true,
+                xfbml: true,
+                oauth: true,
+                version: 'v15.0'
+            });
+
+            checkLoginState();
+
+        };
+
+        function checkLoginState() {
+            FB.getLoginStatus(function (response) {
+                statusChangeCallback(response);
+            })
+        }
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+
+
+        function statusChangeCallback(response) {
+            console.log('statusChangeCallback');
+            if (response.status === 'connected') {
+                // Logged into your app and Facebook.
+                console.log('Welcome!  Fetching your information.... ');
+                FB.api('/me', { fields: 'email,name' }, function (response) {
+                    console.log('Successful login for: ' + response.name);
+                    console.log(response.email);
+                    console.log(response);
+                });
+            } else {
+                // The person is not logged into your app or we are unable to tell.
+                console.log("Not logged in!");
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
